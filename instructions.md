@@ -1,12 +1,27 @@
-# My Custom Agent Requirements
+# My ecommerce trend setting agent requirements
 
 ## Overview
-[Describe your high-level goal and what you want your agent to accomplish]
+Your goal is to create an multi-agent solution that analyzes the latest past and future eCommerce trends in specific industries, transforming these insights into engaging content such as blogs, images, and more to help e-businesses stay ahead of the curve. You will use phidata out-of-the-box infrastucture (frontend/backend), agents, tools, and workflows. You will develop custom components and features to enhance the multiagent's capabilities.
 
 ## Functional Requirements
 
-1. Agent Capabilities
-   - [ ] List specific capabilities you want (e.g., web search, data analysis, etc.)
+1. User interaction
+   - User should send a query through a chat interface
+'  - User should read agent's answers on the same chat interface
+'  - User should get the agent's detailed answers and final content on a canva on the side
+   - User should have access their chat history
+
+2. Agent Capabilities
+   - [User query agent] 
+      - goal: transforms and enhances the user query into several parallel queries to create a comprehensive research.
+      - tools:  exa search, duckDuckSearch
+   - [Dynamic research web agent] 
+   - [Ranking agent]
+   - [Scraping agent]
+   - [Blog writer agent]
+   - [Image creation agent]
+   - [Video creation agent]
+   List specific capabilities you want (e.g., web search, data analysis, etc.)
    - [ ] Define any specific tools the agent should use
    - [ ] Specify any particular APIs or data sources
 
@@ -14,9 +29,7 @@
    - [ ] Define what kind of information the agent should remember
    - [ ] Specify any knowledge bases or documents to include
 
-3. User Interaction
-   - [ ] Describe how you want to interact with the agent
-   - [ ] Specify UI requirements (if any)
+
 
 4. Custom Features
    - [ ] List any custom functionalities you want to add
