@@ -5,6 +5,7 @@
 #    ./scripts/upgrade.sh all
 #
 # Core dependencies
+phidata==2.5.32
 pydantic>=2.9.2
 pydantic-settings>=2.5.2
 python-dotenv>=1.0.1
