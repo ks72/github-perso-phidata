@@ -18,22 +18,79 @@ Your goal is to create a multi-agent, multi-language solution that conducts rele
 ### 2. Agent Capabilities
 #### [User Query Agent]
 - **Goal**: Transform user input into structured, trend research-oriented queries.
-- **Tools**:
-  - Query Pre-processor Tool 
-  - Query Transformer Tool
-  - Query Expander Tool
-  - Output Validator Tool
-  - Query Guardrail Tool
-- **Model**: GPT-4
+- **Model**: GPT-4o
 - **Instructions**:
-  1. Set the current date and language.
-  2. Enforce guardrails.
-  3. Parse user input (tool: Query Pre-processor).
-  4. Restructure components into trend research formats (tool: Query Transformer).
-  5. Enrich with synonyms and contextual details (tool: Query Expander).
-  6. Validate alignment with goals (tool: Output Validator).
-  7. Prepare queries for keyword-based searches (DuckDuckGo) and semantic searches (Exa AI).
-  8. Store queries for further use.
+  1. Set the current date and detect input language and set them as variables.
+  2. Enforce guardrails such as:
+    -  Goal: Align user queries with the platform's research focus.
+    - Instructions:
+      - Analyze Query:
+        - Classify the query as research-related or not using the LLM.
+        - Determine if it is vague, off-topic, or on-scope.
+      - Enforce Research Scope:
+        - For off-scope queries, reframe them into research-oriented alternatives:
+          - Example:
+            - Input: "How to assemble a sofa?"
+            - Response: "This query is outside the research scope. Did you mean 'recent trends in sofa design'?"
+      - Handle Non-Research Queries:
+        - Inform users about scope limitations and suggest rephrasing.
+        - Example:
+          - Input: "Where can I buy a sofa?"
+          - Response: "This platform focuses on market research. Please rephrase your query to explore sofa market trends or design predictions."
+      - Address Vague Queries:
+        - Prompt users for clarification:
+        - Example:
+          - Input: "Tech trends."
+          - Response: "What specific technology or market are you interested in? For example, AI, IoT, or 5G. Any additional context?"
+      - User Feedback Loop:
+        - Allow users to refine their queries interactively based on LLM suggestions.
+        - Example:
+          - Input: "Furniture."
+          - Interaction: "Would you like to explore furniture market trends, designs, or materials in the past year?"
+      - Forward Validated Query:
+        - Pass refined and validated queries to the next step for processing
+  3. Parse user query output from step 2.
+    - Goal: Parse queries into key components using Named Entity Recognition (NER) (focus, context, objective, scope).
+    - Instructions:
+      - Retrieve the current date and language.
+      - Extract:
+       - Focus: Identify products, industries, or topics.
+       - Context: Extract geographic or temporal details.
+       - Objective: Classify intent (e.g., trends, predictions).
+       - Scope: Define key areas of the objective to identify
+      - If key elements are missing, define the extraction parameters to the most general parameters like global for geography, trend for objective and the current year or recent for time.
+      - Never return anything to the user or ask for any feedback.
+  4. Restructure parsed query components from step 3 into trend research-focused templates.
+    - Goal: Format parsed queries into trend research-focused templates.
+    - Instructions:
+      - Map extracted components into structured templates:
+      - Template: `[Objective] + [Focus] + [Context] + [Scope]`
+      - Example: 
+        - Input: "Furniture trends in France."
+        - Output: "What are the recent trends in the furniture market in France?"
+    - Ensure specificity and clarity, and use the query's chosen language.
+  5. Enrich step 4 outputs with synonyms, related terms and contextual details.
+      - Goal: Enrich queries with synonyms, related terms and context details for enriching the search processes.
+      - Instructions:
+        - Add synonyms using the LLM model:
+          - Example: "AI" → "Artificial Intelligence" OR "Machine Learning."
+        - Include broader or related terms to cover adjacent topics:
+          - Example: "Sofas" → "Sofas OR couches OR seating."
+        - Rephrase the query as different types of questions
+          - Example:
+            - Original processed query: "what are the latest trends in sofa beds?"
+            - Other questions:
+              - What are the most popular sofa bed styles for small apartments?
+              - How are designers improving sofa bed comfort in 2024?
+              - Which materials are trending for sofa beds this season?
+      -  Assess your outputs, amend and finalize
+  6. Ensure processed and enriched queries are ready for search execution
+    - Goal: Ensure queries are both ready for keyword and semantic search queries.
+    - Instructions:
+      - Create a set of keyword-based searches
+      - Create a set of semantic-based searches
+      - Construct search queries - data and metadata - for DuckDuckGo API (keyword-based) and Exa API formats (semantic-based)
+  7. Store queries for further use.
 
 #### [Dynamic Research Web Agent]
 - **Goal**: Perform open searches based on User Query Agent outputs.
@@ -309,76 +366,6 @@ Your goal is to create a multi-agent, multi-language solution that conducts rele
 - **Video Creation Agent**: Develop video content.
 
 ### 3. Tool Capabilities
-#### Query Pre-processor Tool
-- **Goal**: Parse queries into key components (focus, context, objective, scope).
-- **Instructions**:
-  - Retrieve the current date.
-  - Extract:
-    - Focus: Identify products, industries, or topics.
-    - Context: Extract geographic or temporal details.
-    - Objective: Classify intent (e.g., trends, predictions).
-    - Scope: Define key areas of the objective to identify
-  - Prompt users for clarification if key elements are missing:
-    - Example:
-      - Input: "Sofas in France."
-      - Response: "Would you like to focus on trends, market evolutions, or predictions?"
-  - Default to global context, trend scope and the current year if missing.
-
-#### Query Transformer Tool
-- **Goal**: Format parsed queries into trend research-focused templates.
-- **Instructions**:
-  - Map extracted components into structured templates:
-    - Template: `[Objective] + [Focus] + [Context] + [Scope]`
-    - Example: "Recent  aesthetic trends in modular furniture in France."
-  - Ensure specificity and clarity, and use the query's chosen language.
-
-#### Query Expander Tool
-- **Goal**: Enrich queries with synonyms and context.
-- **Instructions**:
-  - Add synonyms using domain-specific ontologies or WordNet:
-    - Example: "AI" → "Artificial Intelligence" OR "Machine Learning."
-  - Include broader or related terms to cover adjacent topics:
-    - Example: "Sofas" → "Sofas OR couches OR seating."
-  - Add default context if unspecified:
-    - Input: "Furniture market."
-    - Expanded: "Recent trends in the furniture market globally in 2024."
-
-#### Output Validator Tool
-- **Goal**: Ensure queries are ready for search execution.
-- **Instructions**:
-  - Verify queries contain:
-    - Clearly defined focus, objective, and context.
-    - Proper formatting for semantic and keyword-based searches.
-
-#### Query Guardrail Tool
-- **Goal**: Align user queries with the platform's research focus.
-- **Instructions**:
-  - **Analyze Query**:
-    - Classify the query as research-related or not using the LLM.
-    - Determine if it is vague, off-topic, or on-scope.
-  - **Enforce Research Scope**:
-    - For off-scope queries, reframe them into research-oriented alternatives:
-      - Example:
-        - Input: "How to assemble a sofa?"
-        - Response: "This query is outside the research scope. Did you mean 'recent trends in sofa design'?"
-  - **Handle Non-Research Queries**:
-    - Inform users about scope limitations and suggest rephrasing.
-    - Example:
-      - Input: "Where can I buy a sofa?"
-      - Response: "This platform focuses on market research. Please rephrase your query to explore sofa market trends or design predictions."
-  - **Address Vague Queries**:
-    - Prompt users for clarification:
-      - Example:
-        - Input: "Tech trends."
-        - Response: "What specific technology or market are you interested in? For example, AI, IoT, or 5G."
-  - **User Feedback Loop**:
-    - Allow users to refine their queries interactively based on LLM suggestions.
-    - Example:
-      - Input: "Furniture."
-      - Interaction: "Would you like to explore furniture market trends, designs, or materials?"
-  - **Forward Validated Query**:
-    - Pass refined and validated queries to the next agent for processing.
-
 #### DuckDuckGo search tool
 - **Goal**: Performs DuckDuckGo searches and returns and store results
 - **Instructions**:

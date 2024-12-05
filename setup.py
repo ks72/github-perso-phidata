@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="my-learning-agent",
+    name="ecommerce_agents",  # Changed to match your package name
     version="0.1.0",
     packages=find_packages(),
     install_requires=[
@@ -15,7 +15,7 @@ setup(
     ],
     author="Your Name",
     author_email="your.email@example.com",
-    description="A learning agent built with phidata",
+    description="Ecommerce research agents built with phidata",  # Updated description
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/ks72/github-perso-phidata",
