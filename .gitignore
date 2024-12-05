@@ -22,7 +22,6 @@
 # Ignore .envrc files (used by direnv: https://direnv.net/)
 .envrc
 
-
 # ignore storage dir
 /storage
 .images
@@ -45,5 +44,9 @@ junk
 tmp
 agents.db
 data.db
+
+# Log files
+*.log
+query_agent.log
 
 .ipynb_checkpoints
